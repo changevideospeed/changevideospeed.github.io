@@ -1,0 +1,695 @@
+---
+import { languages, localeList, type Locale, type UITranslations } from '../i18n/ui';
+import { getLocalizedPath } from '../i18n/utils';
+
+interface Props {
+  locale: Locale;
+  t: UITranslations;
+}
+
+const { locale, t } = Astro.props;
+const currentLang = languages[locale];
+const homeHref = getLocalizedPath(locale);
+---
+
+<header
+  id="site-header"
+  class="sticky top-0 z-40 w-full border-b-2 transition-colors"
+  style="background-color: var(--bg-surface); border-color: var(--border-color);"
+>
+  <nav
+    aria-label="Primary Navigation"
+    class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-3 sm:px-5 md:h-[72px] lg:px-6"
+  >
+    <!-- Brand Logo + Title -->
+    <a
+      href={homeHref}
+      aria-label={t.nav.homeAria}
+      class="inline-flex h-12 shrink-0 items-center gap-2.5 rounded-xl px-1 font-extrabold tracking-tight hover:opacity-90 lg:px-2"
+      style="color: var(--text-primary);"
+    >
+      <svg
+        width="34"
+        height="34"
+        viewBox="0 0 64 64"
+        fill="none"
+        aria-hidden="true"
+        class="h-8 w-8 shrink-0 sm:h-9 sm:w-9"
+      >
+        <rect width="64" height="64" rx="16" fill="#0E5E6F" />
+        <rect x="4" y="4" width="56" height="56" rx="13" stroke="#3A8891" stroke-width="3" />
+        <path d="M19 20L33 32L19 44V20Z" fill="#FFEFD6" />
+        <path d="M33 20L47 32L33 44V20Z" fill="#F2DEBA" />
+      </svg>
+      <span class="text-base font-extrabold tracking-tight sm:text-lg lg:text-xl">
+        {t.nav.brandTitle}
+      </span>
+    </a>
+
+    <!-- Mobile & Tablet (< 1024px) Single Toggle Icon Button -->
+    <div class="flex items-center lg:hidden">
+      <button
+        type="button"
+        id="mobile-nav-toggle-btn"
+        aria-label={t.nav.menuOpenAria}
+        aria-expanded="false"
+        aria-controls="mobile-nav-panel"
+        data-open-label={t.nav.menuOpenAria}
+        data-close-label={t.nav.menuCloseAria}
+        class="inline-flex h-12 w-12 items-center justify-center rounded-xl border-2"
+        style="background-color: var(--bg-workspace); color: var(--text-primary); border-color: var(--border-color);"
+      >
+        <!-- Hamburger Icon -->
+        <svg
+          id="mobile-menu-icon-open"
+          width="26"
+          height="26"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.4"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+          class="h-6 w-6"
+        >
+          <line x1="4" x2="20" y1="6" y2="6" />
+          <line x1="4" x2="20" y1="12" y2="12" />
+          <line x1="4" x2="20" y1="18" y2="18" />
+        </svg>
+        <!-- Close Icon -->
+        <svg
+          id="mobile-menu-icon-close"
+          width="26"
+          height="26"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.4"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+          class="hidden h-6 w-6"
+        >
+          <path d="M18 6 6 18" />
+          <path d="m6 6 12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Desktop (>= 1024px) Full Action Cluster -->
+    <div class="hidden items-center gap-2.5 lg:flex">
+      <!-- 1. 8-Language Dropdown Selector -->
+      <div class="relative" id="lang-dropdown-wrapper">
+        <button
+          type="button"
+          id="lang-dropdown-btn"
+          aria-label={t.nav.languageAria}
+          aria-haspopup="listbox"
+          aria-expanded="false"
+          class="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border-2 px-3 font-bold"
+          style="background-color: var(--bg-workspace); color: var(--text-primary); border-color: var(--border-color);"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+            class="h-5 w-5 shrink-0"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+            <path d="M2 12h20" />
+          </svg>
+          <span class="text-sm font-bold">{currentLang.code}</span>
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+            class="h-4 w-4 opacity-80"
+          >
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </button>
+
+        <ul
+          id="lang-dropdown-menu"
+          role="listbox"
+          aria-label={t.nav.languageLabel}
+          class="absolute right-0 mt-2 hidden w-48 overflow-hidden rounded-2xl border-2 py-1.5 shadow-2xl"
+          style="background-color: var(--bg-workspace); border-color: var(--border-color);"
+        >
+          {
+            localeList.map((loc) => {
+              const info = languages[loc];
+              const active = loc === locale;
+              return (
+                <li role="option" aria-selected={active}>
+                  <a
+                    href={getLocalizedPath(loc)}
+                    hreflang={loc}
+                    data-locale-choice={loc}
+                    class="flex items-center justify-between px-4 py-2.5 text-base font-semibold hover:opacity-90"
+                    style={
+                      active
+                        ? 'background-color: var(--btn-primary); color: var(--btn-primary-text);'
+                        : 'color: var(--text-primary);'
+                    }
+                  >
+                    <span>{info.nativeName}</span>
+                    <span class="rounded-md px-1.5 py-0.5 text-xs font-extrabold opacity-85">
+                      {info.code}
+                    </span>
+                  </a>
+                </li>
+              );
+            })
+          }
+        </ul>
+      </div>
+
+      <!-- 2. Light/Dark Mode Toggle Button -->
+      <button
+        type="button"
+        id="theme-toggle-btn"
+        aria-label={t.nav.themeToggleAria}
+        data-label-dark={t.nav.themeToDark}
+        data-label-light={t.nav.themeToLight}
+        class="inline-flex h-11 w-11 items-center justify-center rounded-xl border-2"
+        style="background-color: var(--bg-workspace); color: var(--text-primary); border-color: var(--border-color);"
+      >
+        <svg
+          id="icon-sun"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+          class="hidden h-5 w-5"
+        >
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2" />
+          <path d="M12 20v2" />
+          <path d="m4.93 4.93 1.41 1.41" />
+          <path d="m17.66 17.66 1.41 1.41" />
+          <path d="M2 12h2" />
+          <path d="M20 12h2" />
+          <path d="m6.34 17.66-1.41 1.41" />
+          <path d="m19.07 4.93-1.41 1.41" />
+        </svg>
+        <svg
+          id="icon-moon"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+          class="h-5 w-5"
+        >
+          <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+        </svg>
+      </button>
+
+      <!-- 3. GitHub Repo Icon Link -->
+      <a
+        href="https://github.com/changevideospeed/changevideospeed.github.io"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={t.nav.githubAria}
+        class="inline-flex h-11 w-11 items-center justify-center rounded-xl border-2"
+        style="background-color: var(--bg-workspace); color: var(--text-primary); border-color: var(--border-color);"
+      >
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          aria-hidden="true"
+          class="h-5 w-5"
+        >
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+          />
+        </svg>
+      </a>
+
+      <!-- 4. Install PWA Button -->
+      <button
+        type="button"
+        id="install-pwa-btn"
+        aria-label={t.nav.installPwaAria}
+        data-installed-label={t.nav.installedLabel}
+        class="inline-flex h-11 items-center justify-center gap-2 rounded-xl border-2 px-3.5 font-bold"
+        style="background-color: var(--bg-workspace); color: var(--text-primary); border-color: var(--border-color);"
+      >
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+          class="h-5 w-5 shrink-0"
+        >
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="7 10 12 15 17 10" />
+          <line x1="12" x2="12" y1="15" y2="3" />
+        </svg>
+        <span class="text-sm font-bold whitespace-nowrap" id="install-pwa-label">
+          {t.nav.installPwa}
+        </span>
+      </button>
+
+      <!-- 5. Support the Developer CTA -->
+      <a
+        href="https://kisharadilshan.gumroad.com/coffee"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={t.nav.supportDevAria}
+        class="support-dev-btn inline-flex h-11 items-center justify-center gap-2 rounded-xl px-4 font-bold"
+      >
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+          class="h-5 w-5 shrink-0"
+        >
+          <path d="M17 8h1a4 4 0 1 1 0 8h-1" />
+          <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z" />
+          <path
+            d="M10 12.1c-.45-.6-1.35-.6-1.8 0-.4.53-.3 1.25.18 1.72L10 15.4l1.62-1.58c.48-.47.58-1.19.18-1.72-.45-.6-1.35-.6-1.8 0Z"
+            fill="currentColor"
+          />
+        </svg>
+        <span class="text-sm font-bold whitespace-nowrap">
+          {t.nav.supportDev}
+        </span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Mobile & Tablet (< 1024px) Collapsible Navigation Drawer -->
+  <div
+    id="mobile-nav-panel"
+    class="hidden border-t-2 px-4 py-4 shadow-2xl lg:hidden"
+    style="background-color: var(--bg-workspace); border-color: var(--border-color);"
+  >
+    <div class="mx-auto flex max-w-2xl flex-col gap-3">
+      <!-- Theme + Quick Actions Row -->
+      <div class="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+        <button
+          type="button"
+          id="mobile-theme-toggle-btn"
+          aria-label={t.nav.themeToggleAria}
+          data-label-dark={t.nav.themeToDark}
+          data-label-light={t.nav.themeToLight}
+          class="inline-flex min-h-[48px] items-center justify-center gap-2.5 rounded-2xl border-2 px-4 py-2.5 text-sm font-extrabold"
+          style="background-color: var(--surface-subtle); color: var(--text-primary); border-color: var(--border-color);"
+        >
+          <svg
+            id="mobile-icon-sun"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+            class="hidden h-5 w-5"
+          >
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2m-7.07-15.07 1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+          </svg>
+          <svg
+            id="mobile-icon-moon"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+            class="h-5 w-5"
+          >
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+          </svg>
+          <span id="mobile-theme-label">{t.nav.themeToDark}</span>
+        </button>
+
+        <button
+          type="button"
+          id="mobile-install-pwa-btn"
+          aria-label={t.nav.installPwaAria}
+          data-installed-label={t.nav.installedLabel}
+          class="inline-flex min-h-[48px] items-center justify-center gap-2.5 rounded-2xl border-2 px-4 py-2.5 text-sm font-extrabold"
+          style="background-color: var(--surface-subtle); color: var(--text-primary); border-color: var(--border-color);"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" class="h-5 w-5 shrink-0">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" x2="12" y1="15" y2="3" />
+          </svg>
+          <span id="mobile-install-pwa-label">{t.nav.installPwa}</span>
+        </button>
+      </div>
+
+      <!-- 8-Language Grid -->
+      <div
+        class="rounded-2xl border-2 p-3"
+        style="background-color: var(--surface-subtle); border-color: var(--border-color);"
+      >
+        <p class="mb-2 text-xs font-extrabold uppercase tracking-wider" style="color: var(--text-secondary);">
+          {t.nav.languageLabel}
+        </p>
+        <div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {
+            localeList.map((loc) => {
+              const info = languages[loc];
+              const active = loc === locale;
+              return (
+                <a
+                  href={getLocalizedPath(loc)}
+                  hreflang={loc}
+                  data-locale-choice={loc}
+                  class="flex min-h-[44px] items-center justify-between rounded-xl border px-3 py-2 text-sm font-bold"
+                  style={
+                    active
+                      ? 'background-color: var(--btn-primary); border-color: var(--btn-primary); color: var(--btn-primary-text);'
+                      : 'background-color: var(--bg-workspace); border-color: var(--border-color); color: var(--text-primary);'
+                  }
+                >
+                  <span>{info.nativeName}</span>
+                  <span class="text-xs font-black opacity-80">{info.code}</span>
+                </a>
+              );
+            })
+          }
+        </div>
+      </div>
+
+      <!-- GitHub & Support Developer Row -->
+      <div class="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+        <a
+          href="https://github.com/changevideospeed/changevideospeed.github.io"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={t.nav.githubAria}
+          class="inline-flex min-h-[48px] items-center justify-center gap-2.5 rounded-2xl border-2 px-4 py-2.5 text-sm font-extrabold"
+          style="background-color: var(--bg-workspace); color: var(--text-primary); border-color: var(--border-color);"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5">
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+            />
+          </svg>
+          <span>GitHub</span>
+        </a>
+
+        <a
+          href="https://kisharadilshan.gumroad.com/coffee"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={t.nav.supportDevAria}
+          class="support-dev-btn inline-flex min-h-[48px] items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-extrabold"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" class="h-5 w-5 shrink-0">
+            <path d="M17 8h1a4 4 0 1 1 0 8h-1" />
+            <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z" />
+            <path
+              d="M10 12.1c-.45-.6-1.35-.6-1.8 0-.4.53-.3 1.25.18 1.72L10 15.4l1.62-1.58c.48-.47.58-1.19.18-1.72-.45-.6-1.35-.6-1.8 0Z"
+              fill="currentColor"
+            />
+          </svg>
+          <span>{t.nav.supportDev}</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- PWA Install Helper Modal -->
+<div
+  id="pwa-install-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="pwa-modal-title"
+  class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+>
+  <div
+    class="w-full max-w-md rounded-3xl border-2 p-6 shadow-2xl"
+    style="background-color: var(--bg-workspace); color: var(--text-primary); border-color: var(--border-color);"
+  >
+    <div class="mb-3 flex items-center justify-between gap-3">
+      <h2 id="pwa-modal-title" class="text-xl font-extrabold">
+        {t.nav.installModalTitle}
+      </h2>
+      <button
+        type="button"
+        id="pwa-modal-close-x"
+        aria-label={t.nav.installModalClose}
+        class="inline-flex h-10 w-10 items-center justify-center rounded-xl border"
+        style="border-color: var(--border-color);"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <p class="mb-4 text-base opacity-90" style="color: var(--text-secondary);">
+      {t.nav.installModalBody}
+    </p>
+    <ul class="mb-6 space-y-2.5 text-sm font-medium">
+      <li class="rounded-xl p-3" style="background-color: var(--surface-subtle);">
+        {t.nav.installModalDesktop}
+      </li>
+      <li class="rounded-xl p-3" style="background-color: var(--surface-subtle);">
+        {t.nav.installModalAndroid}
+      </li>
+      <li class="rounded-xl p-3" style="background-color: var(--surface-subtle);">
+        {t.nav.installModalIos}
+      </li>
+    </ul>
+    <button
+      type="button"
+      id="pwa-modal-close-btn"
+      class="w-full rounded-2xl py-3 text-base font-extrabold"
+      style="background-color: var(--btn-primary); color: var(--btn-primary-text);"
+    >
+      {t.nav.installModalClose}
+    </button>
+  </div>
+</div>
+
+<script>
+  const siteHeader = document.getElementById('site-header');
+
+  // Theme Toggle Logic (Desktop + Mobile/Tablet Drawer)
+  const themeBtns = [
+    document.getElementById('theme-toggle-btn'),
+    document.getElementById('mobile-theme-toggle-btn'),
+  ].filter(Boolean) as HTMLElement[];
+
+  const iconSun = document.getElementById('icon-sun');
+  const iconMoon = document.getElementById('icon-moon');
+  const mobileIconSun = document.getElementById('mobile-icon-sun');
+  const mobileIconMoon = document.getElementById('mobile-icon-moon');
+  const mobileThemeLabel = document.getElementById('mobile-theme-label');
+
+  function syncThemeIcons(theme: string) {
+    const isDark = theme === 'dark';
+    iconSun?.classList.toggle('hidden', !isDark);
+    iconMoon?.classList.toggle('hidden', isDark);
+    mobileIconSun?.classList.toggle('hidden', !isDark);
+    mobileIconMoon?.classList.toggle('hidden', isDark);
+
+    for (const btn of themeBtns) {
+      const nextLabel = isDark
+        ? btn.getAttribute('data-label-light')
+        : btn.getAttribute('data-label-dark');
+      if (nextLabel) {
+        btn.setAttribute('aria-label', nextLabel);
+        if (btn.id === 'mobile-theme-toggle-btn' && mobileThemeLabel) {
+          mobileThemeLabel.textContent = nextLabel;
+        }
+      }
+      btn.setAttribute('aria-pressed', String(isDark));
+    }
+  }
+
+  const initialTheme = document.documentElement.getAttribute('data-theme') || 'light';
+  syncThemeIcons(initialTheme);
+
+  function toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme') || 'light';
+    const next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    document.documentElement.classList.toggle('dark', next === 'dark');
+    try {
+      localStorage.setItem('cvs_theme', next);
+    } catch {
+      // ignore storage failure
+    }
+    syncThemeIcons(next);
+  }
+
+  themeBtns.forEach((btn) => btn.addEventListener('click', toggleTheme));
+
+  // Desktop Language Dropdown Logic
+  const langBtn = document.getElementById('lang-dropdown-btn');
+  const langMenu = document.getElementById('lang-dropdown-menu');
+  const langWrapper = document.getElementById('lang-dropdown-wrapper');
+
+  function closeLangMenu() {
+    if (!langMenu || !langBtn) return;
+    langMenu.classList.add('hidden');
+    langBtn.setAttribute('aria-expanded', 'false');
+  }
+
+  langBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!langMenu) return;
+    const isHidden = langMenu.classList.contains('hidden');
+    langMenu.classList.toggle('hidden', !isHidden);
+    langBtn.setAttribute('aria-expanded', String(isHidden));
+  });
+
+  // Mobile & Tablet Toggle Drawer Logic
+  const mobileToggleBtn = document.getElementById('mobile-nav-toggle-btn');
+  const mobileNavPanel = document.getElementById('mobile-nav-panel');
+  const mobileIconOpen = document.getElementById('mobile-menu-icon-open');
+  const mobileIconClose = document.getElementById('mobile-menu-icon-close');
+
+  function setMobileMenuOpen(open: boolean) {
+    if (!mobileToggleBtn || !mobileNavPanel) return;
+    mobileNavPanel.classList.toggle('hidden', !open);
+    mobileIconOpen?.classList.toggle('hidden', open);
+    mobileIconClose?.classList.toggle('hidden', !open);
+    mobileToggleBtn.setAttribute('aria-expanded', String(open));
+    const nextAria = open
+      ? mobileToggleBtn.getAttribute('data-close-label')
+      : mobileToggleBtn.getAttribute('data-open-label');
+    if (nextAria) mobileToggleBtn.setAttribute('aria-label', nextAria);
+  }
+
+  mobileToggleBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isCurrentlyHidden = mobileNavPanel?.classList.contains('hidden') ?? true;
+    setMobileMenuOpen(isCurrentlyHidden);
+  });
+
+  document.addEventListener('click', (e) => {
+    const target = e.target as Node;
+    if (langWrapper && !langWrapper.contains(target)) {
+      closeLangMenu();
+    }
+    if (siteHeader && !siteHeader.contains(target)) {
+      setMobileMenuOpen(false);
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeLangMenu();
+      setMobileMenuOpen(false);
+      closePwaModal();
+    }
+  });
+
+  // PWA Install Logic (Desktop + Mobile/Tablet Drawer)
+  interface BeforeInstallPromptEvent extends Event {
+    prompt: () => Promise<void>;
+    userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+  }
+
+  let deferredPrompt: BeforeInstallPromptEvent | null = null;
+  const pwaBtns = [
+    document.getElementById('install-pwa-btn'),
+    document.getElementById('mobile-install-pwa-btn'),
+  ].filter(Boolean) as HTMLElement[];
+  const pwaLabels = [
+    document.getElementById('install-pwa-label'),
+    document.getElementById('mobile-install-pwa-label'),
+  ].filter(Boolean) as HTMLElement[];
+  const pwaModal = document.getElementById('pwa-install-modal');
+  const pwaCloseX = document.getElementById('pwa-modal-close-x');
+  const pwaCloseBtn = document.getElementById('pwa-modal-close-btn');
+
+  function openPwaModal() {
+    if (!pwaModal) return;
+    pwaModal.classList.remove('hidden');
+    pwaModal.classList.add('flex');
+  }
+
+  function closePwaModal() {
+    if (!pwaModal) return;
+    pwaModal.classList.add('hidden');
+    pwaModal.classList.remove('flex');
+  }
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e as BeforeInstallPromptEvent;
+  });
+
+  window.addEventListener('appinstalled', () => {
+    deferredPrompt = null;
+    const installedText = pwaBtns[0]?.getAttribute('data-installed-label');
+    if (installedText) {
+      pwaLabels.forEach((lbl) => {
+        lbl.textContent = installedText;
+      });
+    }
+  });
+
+  async function handlePwaInstallClick() {
+    setMobileMenuOpen(false);
+    if (deferredPrompt) {
+      await deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        deferredPrompt = null;
+      }
+      return;
+    }
+    openPwaModal();
+  }
+
+  pwaBtns.forEach((btn) => btn.addEventListener('click', handlePwaInstallClick));
+  pwaCloseX?.addEventListener('click', closePwaModal);
+  pwaCloseBtn?.addEventListener('click', closePwaModal);
+  pwaModal?.addEventListener('click', (e) => {
+    if (e.target === pwaModal) closePwaModal();
+  });
+</script>

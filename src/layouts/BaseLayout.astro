@@ -1,0 +1,117 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import JsonLdSchema from '../components/JsonLdSchema.astro';
+import { languages, localeList, type Locale, type UITranslations } from '../i18n/ui';
+import { getLocalizedPath } from '../i18n/utils';
+
+interface Props {
+  locale: Locale;
+  t: UITranslations;
+}
+
+const { locale, t } = Astro.props;
+const siteOrigin = 'https://changevideospeed.github.io';
+const canonicalUrl = `${siteOrigin}${getLocalizedPath(locale)}`;
+const ogImageUrl = `${siteOrigin}/og-image.png`;
+const currentOgLocale = languages[locale].ogLocale;
+const alternateOgLocales = localeList
+  .filter((loc) => loc !== locale)
+  .map((loc) => languages[loc].ogLocale);
+---
+
+<!doctype html>
+<html lang={locale} dir={languages[locale].dir} data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{t.meta.title}</title>
+    <meta name="description" content={t.meta.description} />
+    <meta name="keywords" content={t.meta.keywords} />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="theme-color" content="#0E5E6F" />
+
+    <!-- Canonical & Sitemap Discovery -->
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="sitemap" type="application/xml" title="Sitemap" href={`${siteOrigin}/sitemap.xml`} />
+
+    <!-- Hreflang International Network -->
+    <link rel="alternate" hreflang="x-default" href={`${siteOrigin}/`} />
+    {
+      localeList.map((loc) => (
+        <link rel="alternate" hreflang={loc} href={`${siteOrigin}${getLocalizedPath(loc)}`} />
+      ))
+    }
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="ChangeVideoSpeed" />
+    <meta property="og:title" content={t.meta.title} />
+    <meta property="og:description" content={t.meta.description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={t.hero.h1} />
+    <meta property="og:locale" content={currentOgLocale} />
+    {
+      alternateOgLocales.map((altLoc) => (
+        <meta property="og:locale:alternate" content={altLoc} />
+      ))
+    }
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={t.meta.title} />
+    <meta name="twitter:description" content={t.meta.description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <!-- Icons & PWA Manifest -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    <!-- Google Tag Manager & Google Analytics 4 -->
+    <script is:inline async src="https://www.googletagmanager.com/gtm.js?id=GTM-NPFG4XBJ"></script>
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-5RB9RRC0D1"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'G-5RB9RRC0D1');
+    </script>
+
+    <!-- Strict Zero-Fake-Rating Structured Data -->
+    <JsonLdSchema locale={locale} t={t} />
+
+    <!-- Prevent Theme Flash Before First Paint (Light Mode Default) -->
+    <script is:inline>
+      (function () {
+        try {
+          var saved = localStorage.getItem('cvs_theme');
+          var theme = saved === 'dark' ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', theme);
+          document.documentElement.classList.toggle('dark', theme === 'dark');
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <Header locale={locale} t={t} />
+    <main class="flex-1">
+      <slot />
+    </main>
+    <script is:inline>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+          navigator.serviceWorker.register('/sw.js').catch(function () {});
+        });
+      }
+    </script>
+  </body>
+</html>

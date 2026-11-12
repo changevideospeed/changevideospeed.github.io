@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+.astro/
+
+# Generated local FFmpeg WASM binary (copied from @ffmpeg/core during postinstall/build)
+public/ffmpeg/
+
+# Logs & OS files
+npm-debug.log*
+.DS_Store
+Thumbs.db
+.env
+.env.*

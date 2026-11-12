@@ -1,0 +1,266 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import VideoSpeedWorkspace from './VideoSpeedWorkspace';
+import { type Locale } from '../i18n/ui';
+import { getLocalizedPath, getTranslations } from '../i18n/utils';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = getTranslations(locale);
+const homeUrl = getLocalizedPath(locale);
+---
+
+<BaseLayout locale={locale} t={t}>
+  <!-- FIRST FOLD (100dvh): Strictly Dedicated to Primary H1 + Interactive Speed Controller Box -->
+  <section
+    class="mx-auto flex min-h-[calc(100dvh-64px)] w-full max-w-6xl min-w-0 flex-col items-center justify-center px-3 py-4 sm:px-6 sm:py-6 md:min-h-[calc(100dvh-72px)]"
+  >
+    <h1 class="hero-h1 mb-4 max-w-full break-words text-center sm:mb-6">
+      {t.hero.h1}
+    </h1>
+
+    <div class="w-full min-w-0">
+      <VideoSpeedWorkspace client:load t={t.workspace} />
+    </div>
+  </section>
+
+  <!-- BELOW THE FOLD: Breadcrumbs, How-To, Features, Semantic Platform Guides, Comparison Table & FAQ -->
+  <div
+    class="border-t-2 transition-colors"
+    style="background-color: var(--bg-surface); border-color: var(--border-color);"
+  >
+    <div class="mx-auto max-w-6xl space-y-16 px-4 py-14 sm:px-6 md:py-20">
+      <!-- 1:1 Breadcrumbs matching BreadcrumbList JSON-LD -->
+      <nav aria-label={t.breadcrumbs.ariaLabel} class="text-sm font-bold">
+        <ol class="flex flex-wrap items-center gap-2" style="color: var(--text-secondary);">
+          <li>
+            <a href={homeUrl} class="underline-offset-4 hover:underline" style="color: var(--text-primary);">
+              {t.breadcrumbs.home}
+            </a>
+          </li>
+          <li aria-hidden="true">&gt;</li>
+          <li>
+            <a href="#tools-comparison" class="underline-offset-4 hover:underline" style="color: var(--text-primary);">
+              {t.breadcrumbs.tools}
+            </a>
+          </li>
+          <li aria-hidden="true">&gt;</li>
+          <li aria-current="page" style="color: var(--text-primary);">
+            {t.breadcrumbs.current}
+          </li>
+        </ol>
+      </nav>
+
+      <!-- How-To 3 Steps matching HowTo JSON-LD -->
+      <section aria-labelledby="howto-heading" class="space-y-6">
+        <div class="max-w-3xl space-y-2">
+          <h2 id="howto-heading" class="text-2xl font-extrabold tracking-tight sm:text-3xl" style="color: var(--text-primary);">
+            {t.howTo.title}
+          </h2>
+          <p class="text-base font-medium sm:text-lg" style="color: var(--text-secondary);">
+            {t.howTo.subtitle}
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
+          {
+            t.howTo.steps.map((step) => (
+              <article
+                class="rounded-3xl border-2 p-6 shadow-md"
+                style="background-color: var(--bg-workspace); border-color: var(--border-color);"
+              >
+                <h3 class="mb-2 text-lg font-extrabold" style="color: var(--text-primary);">
+                  {step.title}
+                </h3>
+                <p class="text-base leading-relaxed" style="color: var(--text-secondary);">
+                  {step.desc}
+                </p>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+
+      <!-- Core Architecture & Privacy Features -->
+      <section aria-labelledby="features-heading" class="space-y-6">
+        <h2 id="features-heading" class="text-2xl font-extrabold tracking-tight sm:text-3xl" style="color: var(--text-primary);">
+          {t.features.title}
+        </h2>
+
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          {
+            t.features.items.map((item) => (
+              <article
+                class="rounded-3xl border-2 p-6 shadow-md"
+                style="background-color: var(--bg-workspace); border-color: var(--border-color);"
+              >
+                <h3 class="mb-2 text-lg font-extrabold" style="color: var(--text-primary);">
+                  {item.title}
+                </h3>
+                <p class="text-base leading-relaxed" style="color: var(--text-secondary);">
+                  {item.desc}
+                </p>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+
+      <!-- Semantic Platform & Use-Case SEO Guides -->
+      <section aria-labelledby="guides-heading" class="space-y-6">
+        <div class="max-w-3xl space-y-2">
+          <h2 id="guides-heading" class="text-2xl font-extrabold tracking-tight sm:text-3xl" style="color: var(--text-primary);">
+            {t.guides.title}
+          </h2>
+          <p class="text-base font-medium sm:text-lg" style="color: var(--text-secondary);">
+            {t.guides.subtitle}
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
+          {
+            t.guides.items.map((guide) => (
+              <article
+                class="rounded-3xl border-2 p-6 shadow-md"
+                style="background-color: var(--bg-workspace); border-color: var(--border-color);"
+              >
+                <h3 class="mb-2 text-lg font-extrabold" style="color: var(--text-primary);">
+                  {guide.title}
+                </h3>
+                <p class="text-base leading-relaxed" style="color: var(--text-secondary);">
+                  {guide.desc}
+                </p>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+
+      <!-- Comparison Table: ChangeVideoSpeed vs. CapCut Web & Clideo -->
+      <section id="tools-comparison" aria-labelledby="comparison-heading" class="space-y-6">
+        <div class="max-w-3xl space-y-2">
+          <h2 id="comparison-heading" class="text-2xl font-extrabold tracking-tight sm:text-3xl" style="color: var(--text-primary);">
+            {t.comparison.title}
+          </h2>
+          <p class="text-base font-medium sm:text-lg" style="color: var(--text-secondary);">
+            {t.comparison.subtitle}
+          </p>
+        </div>
+
+        <div
+          class="overflow-x-auto rounded-3xl border-2 shadow-md"
+          style="background-color: var(--bg-workspace); border-color: var(--border-color);"
+        >
+          <table class="w-full min-w-[640px] border-collapse text-left text-base">
+            <thead>
+              <tr class="border-b-2" style="background-color: var(--badge-bg); border-color: var(--border-color); color: var(--text-primary);">
+                <th scope="col" class="px-5 py-4 font-extrabold">{t.comparison.colFeature}</th>
+                <th scope="col" class="px-5 py-4 font-black">{t.comparison.colOurs}</th>
+                <th scope="col" class="px-5 py-4 font-bold">{t.comparison.colCapcut}</th>
+                <th scope="col" class="px-5 py-4 font-bold">{t.comparison.colClideo}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                t.comparison.rows.map((row) => (
+                  <tr class="border-b last:border-b-0" style="border-color: var(--border-color);">
+                    <th scope="row" class="px-5 py-4 font-bold" style="color: var(--text-primary);">
+                      {row.feature}
+                    </th>
+                    <td class="px-5 py-4 font-extrabold" style="color: var(--text-primary); background-color: var(--surface-subtle);">
+                      {row.ours}
+                    </td>
+                    <td class="px-5 py-4 font-medium" style="color: var(--text-secondary);">
+                      {row.capcut}
+                    </td>
+                    <td class="px-5 py-4 font-medium" style="color: var(--text-secondary);">
+                      {row.clideo}
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SEO FAQ Section matching FAQPage JSON-LD -->
+      <section aria-labelledby="faq-heading" class="space-y-6">
+        <h2 id="faq-heading" class="text-2xl font-extrabold tracking-tight sm:text-3xl" style="color: var(--text-primary);">
+          {t.faq.title}
+        </h2>
+
+        <div class="space-y-3">
+          {
+            t.faq.items.map((item) => (
+              <details
+                class="group rounded-2xl border-2 p-5 shadow-sm"
+                style="background-color: var(--bg-workspace); border-color: var(--border-color);"
+              >
+                <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-extrabold" style="color: var(--text-primary);">
+                  <span>{item.q}</span>
+                  <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                    class="faq-chevron h-5 w-5 shrink-0 transition-transform duration-200"
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </summary>
+                <p class="mt-3 border-t pt-3 text-base leading-relaxed" style="border-color: var(--border-color); color: var(--text-secondary);">
+                  {item.a}
+                </p>
+              </details>
+            ))
+          }
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Minimal Clean Footer -->
+  <footer
+    class="border-t-2 py-8"
+    style="background-color: var(--bg-primary); border-color: var(--border-color);"
+  >
+    <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 text-center sm:flex-row sm:px-6 sm:text-left">
+      <div class="space-y-1">
+        <p class="text-base font-extrabold" style="color: var(--text-primary);">
+          {t.footer.tagline}
+        </p>
+        <p class="text-sm font-medium" style="color: var(--text-secondary);">
+          {t.footer.privacyNote} • {t.footer.copyright}
+        </p>
+      </div>
+      <div class="flex flex-wrap items-center justify-center gap-4 text-sm font-extrabold">
+        <a
+          href="https://github.com/changevideospeed/changevideospeed.github.io"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="underline-offset-4 hover:underline"
+          style="color: var(--text-primary);"
+        >
+          {t.footer.githubLink}
+        </a>
+        <a
+          href="https://kisharadilshan.gumroad.com/coffee"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="support-dev-btn rounded-xl px-4 py-2"
+        >
+          {t.footer.supportLink}
+        </a>
+      </div>
+    </div>
+  </footer>
+</BaseLayout>

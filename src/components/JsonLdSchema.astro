@@ -1,0 +1,96 @@
+---
+import type { Locale, UITranslations } from '../i18n/ui';
+import { getLocalizedPath } from '../i18n/utils';
+
+interface Props {
+  locale: Locale;
+  t: UITranslations;
+}
+
+const { locale, t } = Astro.props;
+const siteOrigin = 'https://changevideospeed.github.io';
+const pageUrl = `${siteOrigin}${getLocalizedPath(locale)}`;
+
+const schemaGraph = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebApplication',
+      '@id': `${siteOrigin}/#webapp`,
+      name: 'ChangeVideoSpeed',
+      url: pageUrl,
+      description: t.meta.description,
+      applicationCategory: 'MultimediaApplication',
+      operatingSystem: 'All',
+      browserRequirements: 'Requires JavaScript and WebAssembly',
+      inLanguage: locale,
+      isAccessibleForFree: true,
+      offers: {
+        '@type': 'Offer',
+        price: '0.00',
+        priceCurrency: 'USD',
+      },
+    },
+    {
+      '@type': 'HowTo',
+      '@id': `${pageUrl}#howto`,
+      name: t.howTo.schemaName,
+      description: t.howTo.subtitle,
+      inLanguage: locale,
+      totalTime: 'PT1M',
+      tool: [
+        {
+          '@type': 'HowToTool',
+          name: 'ChangeVideoSpeed Browser WebAssembly Engine',
+        },
+      ],
+      step: t.howTo.steps.map((step, index) => ({
+        '@type': 'HowToStep',
+        position: index + 1,
+        name: step.title,
+        text: step.desc,
+        url: `${pageUrl}#howto-heading`,
+      })),
+    },
+    {
+      '@type': 'FAQPage',
+      '@id': `${pageUrl}#faq`,
+      inLanguage: locale,
+      mainEntity: t.faq.items.map((item) => ({
+        '@type': 'Question',
+        name: item.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.a,
+        },
+      })),
+    },
+    {
+      '@type': 'BreadcrumbList',
+      '@id': `${pageUrl}#breadcrumb`,
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: t.breadcrumbs.home,
+          item: pageUrl,
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: t.breadcrumbs.tools,
+          item: `${pageUrl}#tools-comparison`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: t.breadcrumbs.current,
+          item: pageUrl,
+        },
+      ],
+    },
+  ],
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schemaGraph)} />
